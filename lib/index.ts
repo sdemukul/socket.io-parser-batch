@@ -159,7 +159,19 @@ export class Decoder extends Emitter<{}, {}, DecoderReservedEvents> {
         }
       } else {
         // non-binary full packet
-        super.emitReserved("decoded", packet);
+       // super.emitReserved("decoded", packet);
+        console.log("PACKET-SOCK",packet);
+        if(packet.data[0] === "batchedBroadcast"){
+            for (const encodedPacket of packet.data[1]) {
+                let decodedPacket = this.decodeString(encodedPacket);
+                console.log("PACKET-SOCK-2",decodedPacket);
+                // non-binary full packet
+                super.emitReserved("decoded", decodedPacket);
+            }
+        }else{
+            // non-binary full packet
+            super.emitReserved("decoded", packet);
+        }
       }
     } else if (isBinary(obj) || obj.base64) {
       // raw binary data
